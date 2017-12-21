@@ -12,17 +12,16 @@
 typedef enum {UNDISCOVERED, DISCOVERED, VISITED} VStatus;//顶点状态,未发现，已发现，已访问完毕
 //typedef enum {UNDETERMINED, TREE, CROSS, FORWARD, BACKWARD, PATH} EType;//边在遍历树中所属的类型
 typedef enum {UNDETERMINED, SHORTEST_PATH, MIN_SPAN_TREE} EType;//边类型：尚未决定的边、最短路径的边、最小生成树的树边
-typedef enum {SOURCE, TARGET, IN_PATH, OUT_PATH }VType;//节点类型:源点、终点、在最短路径时，不在最短路径上
+typedef enum {SOURCE, TARGET, IN_PATH, OUT_PATH}VType;//节点类型:源点、终点、在最短路径时，不在最短路径上
 struct Edge{//边对象，不封装
-    double weight; EType type;//权重、边类型
+    double relation; EType type;//用户关系的大小、边类型
     int id;//边的编号
     int source, target;//源点和终点
-    Edge(int source=-1, int target=-1, double weight=-1):
-        source(source), target(target), weight(weight), type(UNDETERMINED){}
+    Edge(int source=-1, int target=-1, double relation=0):
+        source(source), target(target), relation(relation), type(UNDETERMINED){}
 };
 
 struct Vertex {//顶点对象，不封装
-    //QString name; //名字
     int id;//编号，用于图算法中
     int name;//名字，用于写入文件，和编号id不同
     QVector<std::shared_ptr<Edge>> NbrEdges;//邻边集合
@@ -69,7 +68,7 @@ public:
 //读取图中的边属性
     int e(){return m_edges.size();}//返回边的数目
     std::shared_ptr<Edge> NthEdge(int i, int j){return m_vertex[i]->NbrEdges[j];}//返回节点i的第j条边
-    double& weight(int i, int j){return m_vertex[i]->NbrEdges[j]->weight;}//节点i的第j条边的权重，效率较高
+    double weight(int i, int j){return m_vertex[i]->NbrEdges[j]->relation == 0 ? PRIORITY_MAX : (MaxRelation - m_vertex[i]->NbrEdges[j]->relation);}//节点i的第j条边的权重，效率较高
 
 //对图的动态操作
     void reset();//所有顶点、边的辅助信息复位 Note:不会清空节点的连通域集合编号
@@ -77,14 +76,15 @@ public:
 //算法
     template<typename PU> void pfs(int s, PU prioUpdater);//优先级搜索（全图）
     template<typename PU> void PFS(int s, PU prioUpdater);//优先级搜索（单个连通域）
-    void getMinSpanTree(int s);//求最小生成树的prim算法
+    void getMinSpanTree();//求最小生成树的prim算法
+    void getMinSpanTree(int s);//求以s为树根的最小生成树
     double getShortestPath(int source, int target, QVector<int>& path);//求从source到target的最短路径,返回最短路径的长度
     void getConnectedComponent(int root);//求解以root为根的一个联通分量
     void getConnectedComponent();//求解所有的联通分量
 
 //将算法处理后的图写入文件的函数
-    int writeShortestPath(QString filename, const QVector<int>& path);//将最短路径所在的联通分量的信息写入文件，需要知道最短路径的源点
-    int writeMinSpanTree(QString filename);
+    int writeShortestPath(QString filename, const QVector<int>& path);//将最短路径所在的联通分量的信息写入文件，需要知道最短路径
+    int writeMinSpanTree(QString filename);//将最小生成树写入文件
     int writeConnectedComponent(QString filename);
 
 
@@ -109,6 +109,7 @@ public slots:
 private:
     QVector< std::shared_ptr<Edge> > m_edges;//所有的边集合
     QVector< std::shared_ptr<Vertex> > m_vertex;//所有的顶点集合
+    int MaxRelation;//读入的所有边（用户之间的关系）中最大值
 };
 
 

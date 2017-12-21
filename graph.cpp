@@ -9,7 +9,7 @@
 #include <QTextCodec>
 #include <QSet>
 using namespace std;
-Graph::Graph(QObject *parent) : QObject(parent)
+Graph::Graph(QObject *parent) : QObject(parent), MaxRelation(0)
 {
 }
 
@@ -32,19 +32,17 @@ bool Graph::readFromFile(QString filename)//从txt文件filename中读取边和�
 
     for(int i=0; i<n; i++)
     {
-        //QString name = textInput.readLine();
-        //QString name = " ";
         shared_ptr<Vertex> node = make_shared<Vertex>();
         node->id = i;
         m_vertex.push_back(node);
     }
     int i=0;
     while(!textInput.atEnd()){
-        int source, target; double weight;
-        textInput >> source >> target >> weight;
+        int source, target; double relation;
+        textInput >> source >> target >> relation;
         if(textInput.atEnd())break;
-        qDebug()<<source<<target<<weight;
-        shared_ptr<Edge> edge=make_shared<Edge>(source,target,weight);
+        if(relation > MaxRelation) MaxRelation = relation;//记录所有边中最大者
+        shared_ptr<Edge> edge=make_shared<Edge>(source,target,relation);
         edge->id = i++;
         m_edges.push_back(edge);
         m_vertex[source]->NbrEdges.push_back(edge);
@@ -133,6 +131,7 @@ struct PrimPU{//针对Prim算法的顶点优先级更新器
             if(g->priority(v) > g->weight(uk,i)){//如果v的优先级低于边(uk,v)的权重，Note：此处weight2(uk,i)指的是uk的第i条邻边，即边(uk,v)
                 g->priority(v) = g->weight(uk, i);//则更新优先级数
                 g->parent(v) = uk;//更新父节点
+                g->pEdge(v) = g->NthEdge(uk, i)->id;//更新节点v和父节点所共同关联的边
                 return true;
             }
         }
@@ -140,10 +139,17 @@ struct PrimPU{//针对Prim算法的顶点优先级更新器
     }
 };
 
-void Graph::getMinSpanTree(int s)//求最小生成树的prim算法
+void Graph::getMinSpanTree()//求最小生成树的prim算法
 {
-    PrimPU primPU;
-    pfs(s, primPU);//调用优先级搜索(全图）
+    reset(); PrimPU primPU;
+    pfs(0, primPU);//调用优先级搜索(全图）
+    //PFS(s, primPU);//暂时只在单个连通域求最小生成树
+}
+
+void Graph::getMinSpanTree(int s)//求以s为树根的最小生成树的prim算法
+{
+    reset(); PrimPU primPU;
+    PFS(s, primPU);//只在单个连通域求最小生成树
 }
 
 struct DijkstraPU{//针对Dijkstra算法的节点优先级更新器
@@ -233,32 +239,6 @@ int Graph::writeShortestPath(QString filename, const QVector<int>& path){
         }
         nodes.insert(count++, node);
     }
-    /*
-    int count = 0;//所有节点的名字从0开始
-    QJsonArray nodes;
-    for(int i=0; i<n(); i++){//只将最短路径所在的联通分量的所有节点写入文件
-        if(group(i) == groupId){
-            QJsonObject node;
-            node.insert("name", count);
-            name(i) = count;//同时全图第i个节点需要知道自己在文件中的名字为name
-            switch (vType(i)) {
-            case SOURCE:
-                node.insert("type", "source");
-                break;
-            case TARGET:
-                node.insert("type", "target");
-                break;
-            case IN_PATH:
-                node.insert("type", "inPath");
-                break;
-            default:
-                node.insert("type","outPath");
-                break;
-            }
-            nodes.insert(count++, node);
-        }
-    }
-    */
     QJsonArray edges;
     count = 0;//计算边的数目
     for(int i=0; i<e(); i++){
@@ -299,7 +279,48 @@ int Graph::writeShortestPath(QString filename, const QVector<int>& path){
 }
 
 int Graph::writeMinSpanTree(QString filename){
+    //-----将最小生成树写入本地文件------
+    int count = 0;//所有节点的名字从0开始
+    QJsonArray nodes;
+    for(int i=0; i<n(); i++){//只将最短路径所在的联通分量的所有节点写入文件
+        if(status(i) == VISITED){//若当前节点的访问状态为已访问，说明在最小生成树内
+            QJsonObject node;
+            node.insert("name", count);
+            name(i) = count;//同时全图第i个节点需要知道自己在文件中的名字name
+            nodes.insert(count++, node);
+        }
+    }
+    count = 0;//所有节点的边从0开始
+    QJsonArray edges;
+    for(int i=0; i<n(); i++){//只将最短路径所在的联通分量的所有节点写入文件
+        if(status(i) == VISITED){//若干当前节点的访问状态为已访问，说明在最小生成树内
+            if(parent(i) != -1){//若节点不是树根，则必定存在父节点
+                int edgeId = pEdge(i);//找到与父节点相关联的边的编号
+                QJsonObject edge;//将这条边
+                edge.insert("source", name(m_edges[edgeId]->source));
+                edge.insert("target", name(m_edges[edgeId]->target));
+                edges.insert(count++, edge);//转化为JsonObject
+            }
+        }
+    }
+    QJsonObject graph;
+    graph.insert("nodes",nodes);
+    graph.insert("edges", edges);
+    //将Json对象转换为字符串
+    QJsonDocument document;
+    document.setObject(graph);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    QString jsonString(byteArray);
 
+    //打开文件
+    QFile file(filename);
+    if(!file.open(QIODevice::WriteOnly|QIODevice::Text)){
+        qDebug()<<"Failed to open txt";
+        return -1;
+    }
+    QTextStream out(&file);
+    out<<jsonString;//将字符串写入文件
+    file.close();
     return 0;
 }
 
