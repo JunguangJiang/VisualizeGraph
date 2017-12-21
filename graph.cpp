@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QTextCodec>
+#include <QSet>
 using namespace std;
 Graph::Graph(QObject *parent) : QObject(parent)
 {
@@ -32,8 +33,8 @@ bool Graph::readFromFile(QString filename)//从txt文件filename中读取边和�
     for(int i=0; i<n; i++)
     {
         //QString name = textInput.readLine();
-        QString name = " ";
-        shared_ptr<Vertex> node = make_shared<Vertex>(name);
+        //QString name = " ";
+        shared_ptr<Vertex> node = make_shared<Vertex>();
         node->id = i;
         m_vertex.push_back(node);
     }
@@ -82,7 +83,7 @@ bool Graph::adjustThread(double thread, QString inFile, QString outFile){
     return true;
 }
 
-void Graph::reset()//所有顶点、边的信息复位
+void Graph::reset()//所有顶点、边的信息复位Note:不会清空节点的连通域集合编号
 {
     foreach (auto node, m_vertex) {//所有顶点的
         node->status = UNDISCOVERED;//状态
@@ -90,7 +91,8 @@ void Graph::reset()//所有顶点、边的信息复位
         node->priority = PRIORITY_MAX;//优先级数
         node->vType = OUT_PATH;//节点类型
         node->pEdge = -1;//和父节点共同关联边的编号
-        node->group = -1;//节点所属的联通分量
+        node->name = -1;//清空节点的文件名字
+        //node->group = -1;
     }
     foreach (auto edge, m_edges) {//所有边的
         edge->type = UNDETERMINED;//类型
@@ -179,10 +181,11 @@ double Graph::getShortestPath(int source, int target, QVector<int>& path){//求�
 void Graph::getConnectedComponent(int root){
     for(int j=0; j<degree(root); j++){//遍历root的每个
         int u = NthNbr(root, j);//邻点
-        if(VStatus(u) == UNDISCOVERED){//如果当前节点u尚未被发现
-            VStatus(u) = DISCOVERED;//则标记u已经被发现了
+        if(status(u) == UNDISCOVERED){//如果当前节点u尚未被发现
+            status(u) = DISCOVERED;//则标记u已经被发现了
             parent(u) = root;//u是被root发现的
             group(u) = group(root);//u的集合编号保持和root的集合编号相同
+            getConnectedComponent(u);//从u出发再找连通域
         }
     }
 }
@@ -190,20 +193,31 @@ void Graph::getConnectedComponent(int root){
 void Graph::getConnectedComponent(){
     reset();
     for(int v = 0; v < n(); v++){//遍历所有节点
-        if(VStatus(v) == UNDISCOVERED){//如果发现尚未访问当前节点
+        if(status(v) == UNDISCOVERED){//如果发现尚未访问当前节点
             group(v) = v;//那么当前节点所在集合的编号不妨和v相同
             getConnectedComponent(v);//求v所在连通域的所有节点
         }
     }
 }
 
-int Graph::writeShortestPath(QString filename){
+int Graph::writeShortestPath(QString filename, const QVector<int>& path){
     //-----将生成的最短路径写入本地文件------
+    //只将最短路径上的节点或者和最短路径上节点相邻的节点写入文件中
+    //只讲最短路径上的边或者和最短路径上边相邻的节点写入文件中
+    QSet<int> set;//首先求需要写入文件的节点集合
+    for(int v : path){
+        set.insert(v);//将路径上的所有节点v都加入集合
+        for(int j = 0; j < degree(v); j++){//对于v的第j个邻居
+            set.insert(NthNbr(v,j));//也将其加入集合
+        }
+    }
+    int count = 0;//写入文件的节点数量
     QJsonArray nodes;
-    for(int i=0; i<n(); i++){
+    for(int v : set){//遍历上述集合中的每个节点
         QJsonObject node;
-        node.insert("name", name(i));
-        switch (vType(i)) {
+        node.insert("name", count);
+        name(v) = count;//同时全图第i个节点需要知道自己在文件中的名字为name
+        switch (vType(v)) {
         case SOURCE:
             node.insert("type", "source");
             break;
@@ -217,22 +231,51 @@ int Graph::writeShortestPath(QString filename){
             node.insert("type","outPath");
             break;
         }
-        nodes.insert(i, node);
+        nodes.insert(count++, node);
     }
-    QJsonArray edges;
-    for(int i=0; i<e(); i++){
-        QJsonObject edge;
-        edge.insert("source", m_edges[i]->source);
-        edge.insert("target", m_edges[i]->target);
-        switch (m_edges[i]->type) {
-        case SHORTEST_PATH:
-            edge.insert("type", "shortestPath");
-            break;
-        default:
-            edge.insert("type", "outsidePath");
-            break;
+    /*
+    int count = 0;//所有节点的名字从0开始
+    QJsonArray nodes;
+    for(int i=0; i<n(); i++){//只将最短路径所在的联通分量的所有节点写入文件
+        if(group(i) == groupId){
+            QJsonObject node;
+            node.insert("name", count);
+            name(i) = count;//同时全图第i个节点需要知道自己在文件中的名字为name
+            switch (vType(i)) {
+            case SOURCE:
+                node.insert("type", "source");
+                break;
+            case TARGET:
+                node.insert("type", "target");
+                break;
+            case IN_PATH:
+                node.insert("type", "inPath");
+                break;
+            default:
+                node.insert("type","outPath");
+                break;
+            }
+            nodes.insert(count++, node);
         }
-        edges.insert(i, edge);
+    }
+    */
+    QJsonArray edges;
+    count = 0;//计算边的数目
+    for(int i=0; i<e(); i++){
+        if(vType(m_edges[i]->source) != OUT_PATH || vType(m_edges[i]->target) != OUT_PATH ){//只写入和最短路径相关联的边
+            QJsonObject edge;
+            edge.insert( "source", name(m_edges[i]->source) );//写入文件的边的端点都是
+            edge.insert( "target", name(m_edges[i]->target) );//节点的文件名字
+            switch (m_edges[i]->type) {
+            case SHORTEST_PATH:
+                edge.insert("type", "shortestPath");
+                break;
+            default:
+                edge.insert("type", "outsidePath");
+                break;
+            }
+            edges.insert(count++, edge);
+        }
     }
     QJsonObject graph;
     graph.insert("nodes",nodes);
@@ -252,8 +295,6 @@ int Graph::writeShortestPath(QString filename){
     QTextStream out(&file);
     out<<jsonString;//将字符串写入文件
     file.close();
-
-    //-----将生成的最短路径写入本地文件------
     return 0;
 }
 
@@ -267,12 +308,13 @@ int Graph::writeConnectedComponent(QString filename){
     return 0;
 }
 
+/*
 void Graph::printParent()//打印所有的父节点，以调试
 {
     qDebug()<<"Print parent of nodes:";
     qDebug()<<"node parent";
     foreach (auto node, m_vertex) {
-        qDebug() << node->name << " "<< (node->parent==-1?"-1":m_vertex[node->parent]->name);
+        qDebug() << (node->parent==-1?"-1":m_vertex[node->parent]->name);
     }
 }
 void Graph::debug(){
@@ -280,10 +322,12 @@ void Graph::debug(){
     qDebug()<<"node parent priority";
     foreach (auto node, m_vertex) {
         if(node->parent == -1) continue;
-        qDebug() <<"<"<< node->name << ", " << node->id << "> <"<< (node->parent==-1?" ":m_vertex[node->parent]->name) <<","
+        qDebug() <<"<" << node->id << "> <"<< (node->parent==-1?" ":m_vertex[node->parent]->name) <<","
                 <<(node->parent==-1?-1:m_vertex[node->parent]->id)<<"> " <<  node->priority;
     }
 }
+*/
+
 
 void Graph::printPath(int source, int target){//打印路径到qDebug(),Note：前提是source和target之间有路径
     QVector<int> path;
@@ -306,5 +350,11 @@ void Graph::printPath(int source, int target, QVector<int>& path){//打印路径
     while(!S.empty()){
         path.push_back(S.top());
         S.pop();
+    }
+}
+
+void Graph::debug(){
+    for(int i=0; i<n(); i++){
+        qDebug()<<i<< " "<< group(i);
     }
 }

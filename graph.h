@@ -22,8 +22,9 @@ struct Edge{//边对象，不封装
 };
 
 struct Vertex {//顶点对象，不封装
-    QString name; //名字
-    int id;//编号
+    //QString name; //名字
+    int id;//编号，用于图算法中
+    int name;//名字，用于写入文件，和编号id不同
     QVector<std::shared_ptr<Edge>> NbrEdges;//邻边集合
     VStatus status;//状态
     int parent; double priority;//在遍历树中的父节点、优先级数
@@ -31,8 +32,8 @@ struct Vertex {//顶点对象，不封装
     VType vType;//节点类型
     int group;//所属的联通分量集合编号
 
-    Vertex(QString name)://构造新顶点
-        name(name), id(-1), status(UNDISCOVERED),
+    Vertex()://构造新顶点
+        name(-1), id(-1), status(UNDISCOVERED),
         parent(NULL), priority(PRIORITY_MAX),pEdge(-1), vType(OUT_PATH){}
     int getNbrVertex(int i)//求当前节点的第i个邻接节点的编号
         {return ( NbrEdges[i]->source==id ) ? NbrEdges[i]->target : NbrEdges[i]->source; }
@@ -54,15 +55,16 @@ public:
 //读取图中的节点属性
     int n(){return m_vertex.size();}//返回节点数目
     bool isValidVertex(int i){return (0 <= i) && (i < n());}//判断是否为合法的节点编号
-    QString name(int i){return m_vertex[i]->name;}//返回节点i的名字
-    int degree(int i){return m_vertex[i]->NbrEdges.size();}//返回节点i的度
-    int NthNbr(int i, int j){return m_vertex[i]->getNbrVertex(j);}//返回节点i的第j个邻接节点
-    VStatus& status(int i){return m_vertex[i]->status;}//节点状态
-    int& parent(int i){return m_vertex[i]->parent;}//在遍历树中的父亲
-    int& pEdge(int i){return m_vertex[i]->pEdge;}//和遍历树中的父节点所共同关联的边的编号
-    double& priority(int i){return m_vertex[i]->priority;}//在遍历树中的优先级数
-    VType& vType(int i){return m_vertex[i]->vType;}//返回节点i的节点类型
-    int& group(int i){return m_vertex[i]->group;}//返回节点i的联通分量集合的编号
+    //QString name(int i){return m_vertex[i]->name;}//返回节点i的名字
+    inline int& name(int i){return m_vertex[i]->name;}//返回节点i的名字
+    inline int degree(int i){return m_vertex[i]->NbrEdges.size();}//返回节点i的度
+    inline int NthNbr(int i, int j){return m_vertex[i]->getNbrVertex(j);}//返回节点i的第j个邻接节点
+    inline VStatus& status(int i){return m_vertex[i]->status;}//节点状态
+    inline int& parent(int i){return m_vertex[i]->parent;}//在遍历树中的父亲
+    inline int& pEdge(int i){return m_vertex[i]->pEdge;}//和遍历树中的父节点所共同关联的边的编号
+    inline double& priority(int i){return m_vertex[i]->priority;}//在遍历树中的优先级数
+    inline VType& vType(int i){return m_vertex[i]->vType;}//返回节点i的节点类型
+    inline int& group(int i){return m_vertex[i]->group;}//返回节点i的联通分量集合的编号
 
 //读取图中的边属性
     int e(){return m_edges.size();}//返回边的数目
@@ -70,7 +72,7 @@ public:
     double& weight(int i, int j){return m_vertex[i]->NbrEdges[j]->weight;}//节点i的第j条边的权重，效率较高
 
 //对图的动态操作
-    void reset();//所有顶点、边的辅助信息复位
+    void reset();//所有顶点、边的辅助信息复位 Note:不会清空节点的连通域集合编号
 
 //算法
     template<typename PU> void pfs(int s, PU prioUpdater);//优先级搜索（全图）
@@ -81,7 +83,7 @@ public:
     void getConnectedComponent();//求解所有的联通分量
 
 //将算法处理后的图写入文件的函数
-    int writeShortestPath(QString filename);
+    int writeShortestPath(QString filename, const QVector<int>& path);//将最短路径所在的联通分量的信息写入文件，需要知道最短路径的源点
     int writeMinSpanTree(QString filename);
     int writeConnectedComponent(QString filename);
 
