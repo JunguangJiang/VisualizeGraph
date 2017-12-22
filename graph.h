@@ -80,7 +80,7 @@ public:
     void getMinSpanTree(int s);//求以s为树根的最小生成树
     double getShortestPath(int source, int target, QVector<int>& path);//求从source到target的最短路径,返回最短路径的长度
     void getConnectedComponent(int root);//求解以root为根的一个联通分量
-    void getConnectedComponent();//求解所有的联通分量
+    int getConnectedComponent();//求解所有的联通分量,返回连通域的数量
 
 //将算法处理后的图写入文件的函数
     int writeShortestPath(QString filename, const QVector<int>& path);//将最短路径所在的联通分量的信息写入文件，需要知道最短路径

@@ -196,14 +196,18 @@ void Graph::getConnectedComponent(int root){
     }
 }
 
-void Graph::getConnectedComponent(){
+int Graph::getConnectedComponent(){
     reset();
+    int groupNumber=0;//连通域的数量
     for(int v = 0; v < n(); v++){//遍历所有节点
         if(status(v) == UNDISCOVERED){//如果发现尚未访问当前节点
+            status(v) = DISCOVERED;//则v被发现
             group(v) = v;//那么当前节点所在集合的编号不妨和v相同
             getConnectedComponent(v);//求v所在连通域的所有节点
+            groupNumber++;
         }
     }
+    return groupNumber;
 }
 
 int Graph::writeShortestPath(QString filename, const QVector<int>& path){
@@ -325,7 +329,46 @@ int Graph::writeMinSpanTree(QString filename){
 }
 
 int Graph::writeConnectedComponent(QString filename){
+    //-----将联通分量写入本地文件------
+    int count = 0;//所有节点的名字从0开始
+    QJsonArray nodes;
+    for(int i=0; i<n(); i++){//只将所有发现的联通分量的节点写入文件
+        if(status(i) == DISCOVERED){//若当前节点的访问状态为已发现
+            QJsonObject node;
+            node.insert("name", count);
+            name(i) = count;//同时全图第i个节点需要知道自己在文件中的名字name
+            nodes.insert(count++, node);
+        }
+    }
+    count = 0;//所有节点的边从0开始
+    QJsonArray edges;
+    for(int i=0; i<e(); i++){//只将所有发现的联通分量的边写入文件
+        if( status(m_edges[i]->source) == DISCOVERED){//当该边的源点已发现（那么终点也必然发现）
+            QJsonObject edge;
+            edge.insert("source",name(m_edges[i]->source));
+            edge.insert("target",name(m_edges[i]->target));
+            edge.insert("group", group(m_edges[i]->source));
+            edges.insert(count++, edge);
+        }
+    }
+    QJsonObject graph;
+    graph.insert("nodes",nodes);
+    graph.insert("edges", edges);
+    //将Json对象转换为字符串
+    QJsonDocument document;
+    document.setObject(graph);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    QString jsonString(byteArray);
 
+    //打开文件
+    QFile file(filename);
+    if(!file.open(QIODevice::WriteOnly|QIODevice::Text)){
+        qDebug()<<"Failed to open txt";
+        return -1;
+    }
+    QTextStream out(&file);
+    out<<jsonString;//将字符串写入文件
+    file.close();
     return 0;
 }
 
