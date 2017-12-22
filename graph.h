@@ -33,11 +33,11 @@ struct Vertex {//顶点对象，不封装
 
     Vertex()://构造新顶点
         name(-1), id(-1), status(UNDISCOVERED),
-        parent(NULL), priority(PRIORITY_MAX),pEdge(-1), vType(OUT_PATH){}
+        parent(NULL), priority(PRIORITY_MAX),pEdge(-1), vType(OUT_PATH),group(-1){}
     int getNbrVertex(int i)//求当前节点的第i个邻接节点的编号
         {return ( NbrEdges[i]->source==id ) ? NbrEdges[i]->target : NbrEdges[i]->source; }
     Vertex(const Vertex& rhs)://拷贝构造
-        name(rhs.name), id(rhs.id), status(rhs.status), parent(rhs.parent),priority(rhs.priority),pEdge(rhs.pEdge),vType(rhs.vType){}
+        name(rhs.name), id(rhs.id), status(rhs.status), parent(rhs.parent),priority(rhs.priority),pEdge(rhs.pEdge),vType(rhs.vType), group(rhs.group){}
     friend bool operator<(const Vertex& a, const Vertex& b){return a.priority > b.priority;}//用于优先级队列中的比较
 };
 
@@ -48,7 +48,7 @@ class Graph : public QObject
 public:
     explicit Graph(QObject *parent = nullptr);
     bool readFromFile(QString filename);//从文件filename中读取边和点的数据
-    bool adjustThread(double thread, QString inFile,  QString outFile);//改变阈值，从inFile读入，生成一张新的图存到outFile中
+    bool adjustThread(double thread, QString inFile,  QString outFile, double similarityThread = 0.1);//改变阈值，从inFile读入，生成一张新的图存到outFile中 Note:thread是对总阈值的要求，similarityThread是对相似度的要求
     ~Graph();
 
 //读取图中的节点属性
@@ -84,8 +84,8 @@ public:
 
 //将算法处理后的图写入文件的函数
     int writeShortestPath(QString filename, const QVector<int>& path);//将最短路径所在的联通分量的信息写入文件，需要知道最短路径
-    int writeMinSpanTree(QString filename);//将最小生成树写入文件
-    int writeConnectedComponent(QString filename);
+    int writeMinSpanTree(QString filename, bool removeIsolatedPoint = true);//将最小生成树写入文件,如果removeIsolatedPoint为true，则删除孤立点
+    int writeConnectedComponent(QString filename, bool removeIsolatedPoint=true);//将联通分量写入文件，如果removeIsolatedPoint为true，则删除孤立点
 
 
     //path存储从source到target路径上的所有节点

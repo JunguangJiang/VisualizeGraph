@@ -51,7 +51,7 @@ bool Graph::readFromFile(QString filename)//从txt文件filename中读取边和�
     return true;
 }
 
-bool Graph::adjustThread(double thread, QString inFile, QString outFile){
+bool Graph::adjustThread(double thread, QString inFile, QString outFile, double similarityThread){
     QFile inputFile(inFile);
     if(!inputFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -74,7 +74,7 @@ bool Graph::adjustThread(double thread, QString inFile, QString outFile){
     while(!in.atEnd()){
         int source, target; double weight;
         in >> source >> target >> weight;
-        if(weight >= thread){//只有不小于阈值的边才保留
+        if( weight >= thread && ( (weight-(int)weight) >= similarityThread ) ){//只有不小于阈值的边才保留
             out << source << " " << target << " " << weight << endl;
         }
     }
@@ -282,12 +282,13 @@ int Graph::writeShortestPath(QString filename, const QVector<int>& path){
     return 0;
 }
 
-int Graph::writeMinSpanTree(QString filename){
+int Graph::writeMinSpanTree(QString filename, bool removeIsolatedPoint){
     //-----将最小生成树写入本地文件------
     int count = 0;//所有节点的名字从0开始
     QJsonArray nodes;
     for(int i=0; i<n(); i++){//只将最短路径所在的联通分量的所有节点写入文件
         if(status(i) == VISITED){//若当前节点的访问状态为已访问，说明在最小生成树内
+            if(removeIsolatedPoint && degree(i) == 0)continue;//如果选择去除孤立点并且当前节点即为孤立点，则跳过
             QJsonObject node;
             node.insert("name", count);
             name(i) = count;//同时全图第i个节点需要知道自己在文件中的名字name
@@ -328,14 +329,16 @@ int Graph::writeMinSpanTree(QString filename){
     return 0;
 }
 
-int Graph::writeConnectedComponent(QString filename){
+int Graph::writeConnectedComponent(QString filename, bool removeIsolatedPoint){
     //-----将联通分量写入本地文件------
     int count = 0;//所有节点的名字从0开始
     QJsonArray nodes;
     for(int i=0; i<n(); i++){//只将所有发现的联通分量的节点写入文件
         if(status(i) == DISCOVERED){//若当前节点的访问状态为已发现
+            if(removeIsolatedPoint && degree(i) == 0) continue;//如果选择删除孤立点，并且当前节点为孤立点，则不写入文件
             QJsonObject node;
             node.insert("name", count);
+            node.insert("group", group(i));
             name(i) = count;//同时全图第i个节点需要知道自己在文件中的名字name
             nodes.insert(count++, node);
         }
