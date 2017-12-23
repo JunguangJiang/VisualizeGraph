@@ -223,7 +223,6 @@ void Graph::getMinSpanTreeDegrees(){//O(n)复杂度
             if(parent(i) != -1){//若节点不是树根，则必定存在父节点
                 minTreeDegree(i)++; minTreeDegree(parent(i))++;//将所有的树边的两个端点的度数都加一
             }
-            if(minTreeDegree(i)>10) qDebug()<<"i:"<<minTreeDegree(i);
         }
     }
 }
@@ -393,26 +392,6 @@ int Graph::writeConnectedComponent(QString filename, bool removeIsolatedPoint){
     file.close();
     return 0;
 }
-
-/*
-void Graph::printParent()//打印所有的父节点，以调试
-{
-    qDebug()<<"Print parent of nodes:";
-    qDebug()<<"node parent";
-    foreach (auto node, m_vertex) {
-        qDebug() << (node->parent==-1?"-1":m_vertex[node->parent]->name);
-    }
-}
-void Graph::debug(){
-    qDebug()<<"Debugging";
-    qDebug()<<"node parent priority";
-    foreach (auto node, m_vertex) {
-        if(node->parent == -1) continue;
-        qDebug() <<"<" << node->id << "> <"<< (node->parent==-1?" ":m_vertex[node->parent]->name) <<","
-                <<(node->parent==-1?-1:m_vertex[node->parent]->id)<<"> " <<  node->priority;
-    }
-}
-*/
 
 
 void Graph::printPath(int source, int target){//打印路径到qDebug(),Note：前提是source和target之间有路径

@@ -23,10 +23,14 @@ private slots:
 
     void on_connectedComponentButton_clicked();
 
+
+    void on_ConnectedComponentQuickButton_clicked();
+
 private:
     Ui::Dialog *ui;
     QWebEngineView *view;
 
+    void getGroupNumberWithDifferentThread(QString filename);//计算不同阈值下的连通域个数
 };
 
 #endif // DIALOG_H

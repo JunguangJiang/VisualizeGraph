@@ -1,12 +1,6 @@
 #include "dialog.h"
 #include <QApplication>
-#include "graph.h"
-#include <QVector>
-#include <QDebug>
-#include "parameter.h"
 
-#include <QFile>
-#include <QTextStream>
 int main(int argc, char *argv[])
 {
 
@@ -41,12 +35,14 @@ int main(int argc, char *argv[])
     graph->adjustThread(thread, NetworkFile, NetworkFile_AnyThread, similarityThread);
     graph->readFromFile(NetworkFile_AnyThread);
     graph->getConnectedComponent();//求全图所有的联通分量
-    graph->writeConnectedComponent(ConnetedComponentFile, true);//并写入文件(删除孤立点）
+    graph->writeConnectedComponent(ConnectedComponentFile, true);//并写入文件(删除孤立点）
 */
 /*
     Graph * graph = new Graph();
     double thread = 5; double similarityThread = 0.8;
     graph->adjustThread(thread, NetworkFile, NetworkFile_5_08, similarityThread);
 */
+    //w.getGroupNumberWithDifferentThread(GroupNumberInDifferentThreads);//计算不同阈值下的联通域个数
+
     return a.exec();
 }

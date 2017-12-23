@@ -66,6 +66,13 @@
       </layout>
      </item>
      <item>
+      <widget class="QPushButton" name="ConnectedComponentQuickButton">
+       <property name="text">
+        <string>显示不同阈值下的连通分量个数</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

@@ -15,7 +15,8 @@
 
 #define ShortestPathFile "output/shortestPath.json"//生成的最短路径图信息
 #define MinSpanTreeFile "output/minSpanTree.json"//生成的最小生成树图信息
-#define ConnetedComponentFile "output/connectedComponent.json"//生成的连通图信息
+#define ConnectedComponentFile "output/connectedComponent.json"//生成的连通图信息
+#define GroupNumberInDifferentThreads "output/groupNumberInDifferentThreads.json"//在不同阈值下的连通图个数
 
 #define ShortestPathHtml "output/shortestPath.html"//生成的最短路径html
 #define MinSpanTreeHtml "output/minSpanTree.html"//生成的最小生成树html

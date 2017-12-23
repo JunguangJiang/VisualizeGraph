@@ -9,10 +9,11 @@
 #include <memory>
 #include <QStack>
 #include "parameter.h"
+
 typedef enum {UNDISCOVERED, DISCOVERED, VISITED} VStatus;//顶点状态,未发现，已发现，已访问完毕
-//typedef enum {UNDETERMINED, TREE, CROSS, FORWARD, BACKWARD, PATH} EType;//边在遍历树中所属的类型
 typedef enum {UNDETERMINED, SHORTEST_PATH, MIN_SPAN_TREE} EType;//边类型：尚未决定的边、最短路径的边、最小生成树的树边
 typedef enum {SOURCE, TARGET, IN_PATH, OUT_PATH}VType;//节点类型:源点、终点、在最短路径时，不在最短路径上
+
 struct Edge{//边对象，不封装
     double relation; EType type;//用户关系的大小、边类型
     int id;//边的编号
@@ -88,30 +89,17 @@ public:
     int writeMinSpanTree(QString filename, bool removeIsolatedPoint = true);//将最小生成树写入文件,如果removeIsolatedPoint为true，则删除孤立点
     int writeConnectedComponent(QString filename, bool removeIsolatedPoint=true);//将联通分量写入文件，如果removeIsolatedPoint为true，则删除孤立点
 
-
     //path存储从source到target路径上的所有节点
     void printPath(int source, int target, QVector<int>& path);//从源点到终点打印路径,打印到path中
 
-//和数据的可视化（与js的交互）相关的函数
-    void conveyGraphData();//传送图的节点和边信息
-
 //和调试相关的函数
     void debug();
-    void printParent();//打印所有节点的父节点
     void printPath(int source, int target);//从源点到终点打印路径,打印到qDebug()中
-
-signals:
-//和数据的可视化（与js的交互）相关的信号
-    void visualizeMinSpanTree();//可视化最小生成树
-    void visualizeShortestPath();//可视化最短路径
-
-public slots:
 
 private:
     QVector< std::shared_ptr<Edge> > m_edges;//所有的边集合
     QVector< std::shared_ptr<Vertex> > m_vertex;//所有的顶点集合
     int MaxRelation;//读入的所有边（用户之间的关系）中最大值
-
     void getMinSpanTreeDegrees();//得到所有节点在最小生成树中的度数
 };
 

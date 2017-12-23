@@ -7,6 +7,13 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include "graph.h"
+
+#include <QFile>
+#include <QTextStream>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QByteArray>
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -85,7 +92,7 @@ void Dialog::on_connectedComponentButton_clicked()
         ui->resultEdit->setText(connectedComponentString);
 
         //并进行可视化
-        graph.writeConnectedComponent(ConnetedComponentFile, true);//并写入文件(删除孤立点）
+        graph.writeConnectedComponent(ConnectedComponentFile, true);//并写入文件(删除孤立点）
         view->resize(ui->graphicsView->size());
         QString connectedComponentHtmlAbsolutePath = "file:///"+QFileInfo(ConnectedComponentHtml).absoluteFilePath();//最短路径的html的绝对路径
         view->load(connectedComponentHtmlAbsolutePath);//加载最短路径
@@ -94,4 +101,44 @@ void Dialog::on_connectedComponentButton_clicked()
     }else{
         QMessageBox::information(this,tr("错误输入"),"错误的相似度阈值输入，相似度阈值在[0.1,0.9]范围内", QMessageBox::Ok);
     }
+}
+
+void Dialog::getGroupNumberWithDifferentThread(QString filename){
+    double thread[7] = {3, 8, 15, 25, 35, 55, 75};
+    double similarityThread[6] = {0.2, 0.5, 0.7, 0.85, 0.89, 0.899};
+    QJsonArray datas;//多次测试的结果
+    int count = 0;
+    for(int i=0; i<7; i++){
+        for(int j=0; j<6; j++){
+            Graph graph;
+            graph.adjustThread(thread[i], NetworkFile, NetworkFile_AnyThread, similarityThread[j]);
+            graph.readFromFile(NetworkFile_AnyThread);
+            int groupNumber = graph.getConnectedComponent();
+            QJsonObject data;//一次测试的结果
+            data.insert("thread", thread[i]);
+            data.insert("similarityThread",similarityThread[j]);
+            data.insert("groupNumber", groupNumber);//记录连通域个数
+            datas.insert(count++, data);
+        }
+    }
+    //将Json对象转换为字符串
+    QJsonDocument document;
+    document.setArray(datas);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    QString jsonString(byteArray);
+
+    //打开文件
+    QFile file(filename);
+    if(!file.open(QIODevice::WriteOnly|QIODevice::Text)){
+        qDebug()<<"Failed to open txt";
+        return;
+    }
+    QTextStream out(&file);
+    out<<jsonString;//将字符串写入文件
+    file.close();
+}
+
+void Dialog::on_ConnectedComponentQuickButton_clicked()
+{
+    //可视化不同阈值下的联通fenl
 }
