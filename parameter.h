@@ -10,8 +10,8 @@
 #define NetworkFile_50 "output/network_50.csv"//阈值为50的文件
 #define NetworkFile_20 "output/network_20.csv"//阈值为20的文件
 #define NetworkFile_5 "output/network_5.csv"//阈值为5的文件
+#define NetworkFile_5_08  "output/network_5_08.csv"//阈值为3和0.8的文件
 #define NetworkFile_AnyThread "output/network_anythread.csv"//求任意阈值的联通分量文件
-#define NetworkFile_Test "output/test.csv" //调试时用的文件
 
 #define ShortestPathFile "output/shortestPath.json"//生成的最短路径图信息
 #define MinSpanTreeFile "output/minSpanTree.json"//生成的最小生成树图信息

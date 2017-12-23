@@ -97,13 +97,17 @@ void Graph::reset()//所有顶点、边的信息复位Note:不会清空节点的
     }
 }
 
-template<typename PU> void Graph::pfs(int s, PU prioUpdater)//优先级搜索（全图）
+template<typename PU> int Graph::pfs(int s, PU prioUpdater)//优先级搜索（全图）
 {
     reset(); int v = s;//初始化
+    int groupNumber = 0;//连通域的个数
     do//逐一检查所有顶点
-        if(UNDISCOVERED == status(v))//一旦遇到尚未发现的顶点
+        if(UNDISCOVERED == status(v)){//一旦遇到尚未发现的顶点
             PFS(v,prioUpdater);//即从该顶点出发启动一次PFS
+            groupNumber++;
+        }
     while( s != (v = (++v % m_vertex.size())));//按序号检查
+    return groupNumber;
 }
 
 template<typename PU> void Graph::PFS(int s, PU prioUpdater)//优先级搜索（单个连通域）
@@ -139,18 +143,20 @@ struct PrimPU{//针对Prim算法的顶点优先级更新器
     }
 };
 
-void Graph::getMinSpanTree()//求最小生成树的prim算法
+int Graph::getMinSpanTree()//求最小生成树的prim算法
 {
     reset(); PrimPU primPU;
-    pfs(0, primPU);//调用优先级搜索(全图）
-    //PFS(s, primPU);//暂时只在单个连通域求最小生成树
+    int groupNumber = pfs(0, primPU);//调用优先级搜索(全图）
+    getMinSpanTreeDegrees();//计算所有节点在最小生成树中的度数
+    return groupNumber;//然后返回最小生成树的个数
 }
-
+/*
 void Graph::getMinSpanTree(int s)//求以s为树根的最小生成树的prim算法
 {
     reset(); PrimPU primPU;
     PFS(s, primPU);//只在单个连通域求最小生成树
 }
+*/
 
 struct DijkstraPU{//针对Dijkstra算法的节点优先级更新器
     bool operator()(Graph* g, int uk, int i){
@@ -172,10 +178,11 @@ double Graph::getShortestPath(int source, int target, QVector<int>& path){//求�
     reset(); DijkstraPU dijkstraPU;
     PFS(source, dijkstraPU);//调用优先级搜索,只需要在source所在连通域寻找
 
-    if(priority(target) < PRIORITY_MAX)//如果从source到target直接有路，则
+    if(priority(target) == PRIORITY_MAX)//如果从source到target没有路，则
     {
-        printPath(source, target, path);//将路径打印到S中
-    }
+        return PRIORITY_MAX;//则返回无穷大
+    }//若从source到target有路，则
+    printPath(source, target, path);//将路径打印到S中
     for(int i=1; i<path.size(); i++){//路径上的点和边
         vType(path[i]) = IN_PATH;//标记为在路径上
         m_edges[pEdge(path[i])]->type = SHORTEST_PATH;
@@ -208,6 +215,17 @@ int Graph::getConnectedComponent(){
         }
     }
     return groupNumber;
+}
+
+void Graph::getMinSpanTreeDegrees(){//O(n)复杂度
+    for(int i=0; i<n(); i++){//遍历所有的树边
+        if(status(i) == VISITED){//若干当前节点的访问状态为已访问，说明在最小生成树内
+            if(parent(i) != -1){//若节点不是树根，则必定存在父节点
+                minTreeDegree(i)++; minTreeDegree(parent(i))++;//将所有的树边的两个端点的度数都加一
+            }
+            if(minTreeDegree(i)>10) qDebug()<<"i:"<<minTreeDegree(i);
+        }
+    }
 }
 
 int Graph::writeShortestPath(QString filename, const QVector<int>& path){
@@ -291,6 +309,7 @@ int Graph::writeMinSpanTree(QString filename, bool removeIsolatedPoint){
             if(removeIsolatedPoint && degree(i) == 0)continue;//如果选择去除孤立点并且当前节点即为孤立点，则跳过
             QJsonObject node;
             node.insert("name", count);
+            node.insert("degree", minTreeDegree(i));//在最小生成中的度数
             name(i) = count;//同时全图第i个节点需要知道自己在文件中的名字name
             nodes.insert(count++, node);
         }

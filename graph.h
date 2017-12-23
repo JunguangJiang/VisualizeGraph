@@ -30,14 +30,15 @@ struct Vertex {//顶点对象，不封装
     int pEdge;//和遍历树中父节点先关联的边的编号
     VType vType;//节点类型
     int group;//所属的联通分量集合编号
+    int minTreeDegree;//在最小生成树中的度数
 
     Vertex()://构造新顶点
         name(-1), id(-1), status(UNDISCOVERED),
-        parent(NULL), priority(PRIORITY_MAX),pEdge(-1), vType(OUT_PATH),group(-1){}
+        parent(NULL), priority(PRIORITY_MAX),pEdge(-1), vType(OUT_PATH),group(-1),minTreeDegree(0){}
     int getNbrVertex(int i)//求当前节点的第i个邻接节点的编号
         {return ( NbrEdges[i]->source==id ) ? NbrEdges[i]->target : NbrEdges[i]->source; }
     Vertex(const Vertex& rhs)://拷贝构造
-        name(rhs.name), id(rhs.id), status(rhs.status), parent(rhs.parent),priority(rhs.priority),pEdge(rhs.pEdge),vType(rhs.vType), group(rhs.group){}
+        name(rhs.name), id(rhs.id), status(rhs.status), parent(rhs.parent),priority(rhs.priority),pEdge(rhs.pEdge),vType(rhs.vType), group(rhs.group),minTreeDegree(rhs.minTreeDegree){}
     friend bool operator<(const Vertex& a, const Vertex& b){return a.priority > b.priority;}//用于优先级队列中的比较
 };
 
@@ -64,7 +65,7 @@ public:
     inline double& priority(int i){return m_vertex[i]->priority;}//在遍历树中的优先级数
     inline VType& vType(int i){return m_vertex[i]->vType;}//返回节点i的节点类型
     inline int& group(int i){return m_vertex[i]->group;}//返回节点i的联通分量集合的编号
-
+    inline int& minTreeDegree(int i){return m_vertex[i]->minTreeDegree;}//返回节点i在最小生成树中的度数
 //读取图中的边属性
     int e(){return m_edges.size();}//返回边的数目
     std::shared_ptr<Edge> NthEdge(int i, int j){return m_vertex[i]->NbrEdges[j];}//返回节点i的第j条边
@@ -74,10 +75,10 @@ public:
     void reset();//所有顶点、边的辅助信息复位 Note:不会清空节点的连通域集合编号
 
 //算法
-    template<typename PU> void pfs(int s, PU prioUpdater);//优先级搜索（全图）
+    template<typename PU> int pfs(int s, PU prioUpdater);//优先级搜索（全图）
     template<typename PU> void PFS(int s, PU prioUpdater);//优先级搜索（单个连通域）
-    void getMinSpanTree();//求最小生成树的prim算法
-    void getMinSpanTree(int s);//求以s为树根的最小生成树
+    int getMinSpanTree();//求最小生成树的prim算法
+    //void getMinSpanTree(int s);//求以s为树根的最小生成树
     double getShortestPath(int source, int target, QVector<int>& path);//求从source到target的最短路径,返回最短路径的长度
     void getConnectedComponent(int root);//求解以root为根的一个联通分量
     int getConnectedComponent();//求解所有的联通分量,返回连通域的数量
@@ -110,6 +111,8 @@ private:
     QVector< std::shared_ptr<Edge> > m_edges;//所有的边集合
     QVector< std::shared_ptr<Vertex> > m_vertex;//所有的顶点集合
     int MaxRelation;//读入的所有边（用户之间的关系）中最大值
+
+    void getMinSpanTreeDegrees();//得到所有节点在最小生成树中的度数
 };
 
 

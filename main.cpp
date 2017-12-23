@@ -43,5 +43,10 @@ int main(int argc, char *argv[])
     graph->getConnectedComponent();//求全图所有的联通分量
     graph->writeConnectedComponent(ConnetedComponentFile, true);//并写入文件(删除孤立点）
 */
+/*
+    Graph * graph = new Graph();
+    double thread = 5; double similarityThread = 0.8;
+    graph->adjustThread(thread, NetworkFile, NetworkFile_5_08, similarityThread);
+*/
     return a.exec();
 }
