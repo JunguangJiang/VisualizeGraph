@@ -23,7 +23,6 @@ private slots:
 
     void on_connectedComponentButton_clicked();
 
-
     void on_ConnectedComponentQuickButton_clicked();
 
 private:

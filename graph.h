@@ -12,7 +12,7 @@
 
 typedef enum {UNDISCOVERED, DISCOVERED, VISITED} VStatus;//顶点状态,未发现，已发现，已访问完毕
 typedef enum {UNDETERMINED, SHORTEST_PATH, MIN_SPAN_TREE} EType;//边类型：尚未决定的边、最短路径的边、最小生成树的树边
-typedef enum {SOURCE, TARGET, IN_PATH, OUT_PATH}VType;//节点类型:源点、终点、在最短路径时，不在最短路径上
+typedef enum {SOURCE, TARGET, IN_PATH, OUT_PATH} VType;//节点类型:源点、终点、在最短路径时，不在最短路径上
 
 struct Edge{//边对象，不封装
     double relation; EType type;//用户关系的大小、边类型

@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QWebEngineView>
 #include <QDebug>
+#include <QDir>
 #include <QFileInfo>
 #include <QMessageBox>
 #include "graph.h"
@@ -18,6 +19,7 @@ Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
+    QDir::setCurrent(QApplication::applicationDirPath());
     ui->setupUi(this);
     view = new QWebEngineView(ui->graphicsView);
     view->show();

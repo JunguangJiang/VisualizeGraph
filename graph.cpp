@@ -22,7 +22,7 @@ bool Graph::readFromFile(QString filename)//从txt文件filename中读取边和�
     QFile file(filename);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        qDebug()<<"Can not open the graph file";
+        qDebug() << "Can not open the graph file:" << filename;
         return false;
     }
     QTextStream textInput(&file);
@@ -40,9 +40,9 @@ bool Graph::readFromFile(QString filename)//从txt文件filename中读取边和�
     while(!textInput.atEnd()){
         int source, target; double relation;
         textInput >> source >> target >> relation;
-        if(textInput.atEnd())break;
+        if(textInput.atEnd()) break;
         if(relation > MaxRelation) MaxRelation = relation;//记录所有边中最大者
-        shared_ptr<Edge> edge=make_shared<Edge>(source,target,relation);
+        shared_ptr<Edge> edge = make_shared<Edge>(source,target,relation);
         edge->id = i++;
         m_edges.push_back(edge);
         m_vertex[source]->NbrEdges.push_back(edge);
@@ -419,7 +419,7 @@ void Graph::printPath(int source, int target, QVector<int>& path){//打印路径
 }
 
 void Graph::debug(){
-    for(int i=0; i<n(); i++){
-        qDebug()<<i<< " "<< group(i);
+    for(int i=0; i < n(); i++){
+        qDebug() << i << " " << group(i);
     }
 }
