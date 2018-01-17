@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type = "text/javascript" src = "ConnectedComponent.js"></script>
+    <script type="text/javascript" src = "color.js"></script>
+</head>
+<body>
+<p>Hello World</p>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+<script>
+
+    d3.json("connectedComponent.json",function (error, graph) {
+        if (error) {
+            console.log("加载json文件出错", error);
+        }
+        visualizeConnectedComponent(graph,d3);
+    });
+</script>
+</body>
+</html>
