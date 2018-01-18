@@ -2,8 +2,8 @@ function visualizeShortestPath(graph,d3) {//将图graph上的最短路径可视�
     var nodes = graph.nodes;
     var edges = graph.edges;
 
-    var width = 600;
-    var height = 600;
+    var width = 1000;
+    var height = 550;
 
 
     var svg = d3.select("body")
@@ -79,13 +79,49 @@ function visualizeShortestPath(graph,d3) {//将图graph上的最短路径可视�
 
     force.on("tick", function(){	//对于每一个时间间隔
         //更新连线坐标
-        svg_edges.attr("x1",function(d){ return d.source.x; })
-            .attr("y1",function(d){ return d.source.y; })
-            .attr("x2",function(d){ return d.target.x; })
-            .attr("y2",function(d){ return d.target.y; });
+        svg_edges.attr("x1",function(d){ 
+                if (d.source.x < 0)
+                    d.source.x = 0;
+                else if (d.source.x > width)
+                    d.source.x = width;
+                return d.source.x; 
+            })
+            .attr("y1",function(d){ 
+                if (d.source.y < 0)
+                    d.source.y = 0;
+                else if (d.source.y > width)
+                    d.source.y = width;
+                return d.source.y; 
+            })
+            .attr("x2",function(d){ 
+                if (d.target.x < 0)
+                    d.target.x = 0;
+                else if (d.target.x > width)
+                    d.target.x = width;
+                return d.target.x; 
+            })
+            .attr("y2",function(d){ 
+                if (d.target.y < 0)
+                    d.target.y = 0;
+                else if (d.target.y > width)
+                    d.target.y = width;
+                return d.target.y; 
+            })
 
         //更新节点坐标
-        svg_nodes.attr("cx",function(d){ return d.x; })
-            .attr("cy",function(d){ return d.y; });
+        svg_nodes.attr("cx",function(d){ 
+                if (d.x < 0)
+                    d.x = 0;
+                else if (d.x > width)
+                    d.x = width;
+                return d.x; 
+            })
+            .attr("cy",function(d){ 
+                if (d.y < 0)
+                    d.y = 0;
+                else if (d.y > width)
+                    d.y = width;
+                return d.y; 
+            })
     });
 }

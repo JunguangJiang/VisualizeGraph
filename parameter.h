@@ -16,11 +16,12 @@
 #define ShortestPathFile "output/shortestPath.json"//生成的最短路径图信息
 #define MinSpanTreeFile "output/minSpanTree.json"//生成的最小生成树图信息
 #define ConnectedComponentFile "output/connectedComponent.json"//生成的连通图信息
-#define GroupNumberInDifferentThreads "output/groupNumberInDifferentThreads.json"//在不同阈值下的连通图个数
+#define GroupNumberInDifferentThreadsFile "output/groupNumberInDifferentThreads.json"//在不同阈值下的连通图个数
 
 #define ShortestPathHtml "output/shortestPath.html"//生成的最短路径html
 #define MinSpanTreeHtml "output/minSpanTree.html"//生成的最小生成树html
 #define ConnectedComponentHtml "output/ConnectedComponent.html"//生成的连通图html
+#define GroupNumberInDifferentThreadsHtml "output/GroupNumberInDifferentThreads.html"//生成的连通图html
 
 #define PRIORITY_MAX std::numeric_limits<double>::max()//节点权重的最大可能取值
 #endif // PARAMETER_H

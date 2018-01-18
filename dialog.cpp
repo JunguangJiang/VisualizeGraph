@@ -145,8 +145,8 @@ void Dialog::getGroupNumberWithDifferentThread(QString filename){
 
 void Dialog::on_ConnectedComponentQuickButton_clicked()
 {
-    //可视化不同阈值下的联通fenl
-    qDebug() << "start";
-    getGroupNumberWithDifferentThread("output/iii");
-    qDebug() << "ok";
+    //getGroupNumberWithDifferentThread(GroupNumberInDifferentThreadsFile);
+    view->resize(ui->graphicsView->size());
+    QString getGroupNumberWithDifferentThreadHtmlAbsolutePath = "file:///"+QFileInfo(GroupNumberInDifferentThreadsHtml).absoluteFilePath();//最短路径的html的绝对路径
+    view->load(getGroupNumberWithDifferentThreadHtmlAbsolutePath);//可视化不同阈值下的联通分量
 }

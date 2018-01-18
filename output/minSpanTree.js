@@ -2,8 +2,8 @@ function visualizeMinSpanTree(graph,d3) {//将图graph上的最短路径可视�
     var nodes = graph.nodes;
     var edges = graph.edges;
 
-    var width = 800;
-    var height = 800;
+    var width = 1000;
+    var height = 550;
 
 
     var svg = d3.select("body")
