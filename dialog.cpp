@@ -44,6 +44,7 @@ void Dialog::on_minSpanTreeButton_clicked()
     graph.writeMinSpanTree(MinSpanTreeFile, true);//并写入文件,选择删除孤立点
     view->resize(ui->graphicsView->size());
     QString minSpanTreeHtmlAbsolutePath = "file:///"+QFileInfo(MinSpanTreeHtml).absoluteFilePath();//最小生成树的html的绝对路径
+    view->show();
     view->load(minSpanTreeHtmlAbsolutePath);//加载最小生成树
 }
 
@@ -60,6 +61,7 @@ void Dialog::on_shortestPathButton_clicked()
         if(pathLength == PRIORITY_MAX){//如果二者之间不存在路径，则输出提示信息
             QString pathString = QString("节点")+QString::number(source)+QString("和节点")+QString::number(target)+QString("之间不存在路径");
             ui->resultEdit->setText(pathString);
+            view->hide();
         }else{//否则输出二者之间的路径
             QString pathString = QString("节点")+QString::number(source)+"和节点"+QString::number(target)+"之间的路径总长为"+QString::number(pathLength)+" 路径为：";
             for(int i = 0; i < path.size(); i++){
@@ -72,6 +74,7 @@ void Dialog::on_shortestPathButton_clicked()
             graph.writeShortestPath(ShortestPathFile, path);//并写入文件中
             view->resize(ui->graphicsView->size());
             QString shortestPathHtmlAbsolutePath = "file:///"+QFileInfo(ShortestPathHtml).absoluteFilePath();//最短路径的html的绝对路径
+            view->show();
             view->load(shortestPathHtmlAbsolutePath);//加载最短路径
         }
     }else if(!graph.isValidVertex(source)){
@@ -97,6 +100,7 @@ void Dialog::on_connectedComponentButton_clicked()
         graph.writeConnectedComponent(ConnectedComponentFile, true);//并写入文件(删除孤立点）
         view->resize(ui->graphicsView->size());
         QString connectedComponentHtmlAbsolutePath = "file:///"+QFileInfo(ConnectedComponentHtml).absoluteFilePath();//最短路径的html的绝对路径
+        view->show();
         view->load(connectedComponentHtmlAbsolutePath);//加载最短路径
     }else if(thread <= 2){
         QMessageBox::information(this,tr("错误输入"),"错误的总阈值输入，总阈值需要大于2", QMessageBox::Ok);
@@ -149,5 +153,6 @@ void Dialog::on_ConnectedComponentQuickButton_clicked()
     ui->resultEdit->setText("请在下方选择总阈值");
     view->resize(ui->graphicsView->size());
     QString getGroupNumberWithDifferentThreadHtmlAbsolutePath = "file:///"+QFileInfo(GroupNumberInDifferentThreadsHtml).absoluteFilePath();//最短路径的html的绝对路径
+    view->show();
     view->load(getGroupNumberWithDifferentThreadHtmlAbsolutePath);//可视化不同阈值下的联通分量
 }
