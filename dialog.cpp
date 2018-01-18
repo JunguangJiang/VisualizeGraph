@@ -109,8 +109,10 @@ void Dialog::getGroupNumberWithDifferentThread(QString filename){
     double thread[7] = {3, 8, 15, 25, 35, 55, 75};
     double similarityThread[6] = {0.2, 0.5, 0.7, 0.85, 0.89, 0.899};
     QJsonArray datas;//多次测试的结果
-    int count = 0;
+    int count1 = 0;
     for(int i=0; i<7; i++){
+        QJsonArray sameThread;// 一组测试的结果
+        int count2 = 0;
         for(int j=0; j<6; j++){
             Graph graph;
             graph.adjustThread(thread[i], NetworkFile, NetworkFile_AnyThread, similarityThread[j]);
@@ -120,8 +122,9 @@ void Dialog::getGroupNumberWithDifferentThread(QString filename){
             data.insert("thread", thread[i]);
             data.insert("similarityThread",similarityThread[j]);
             data.insert("groupNumber", groupNumber);//记录连通域个数
-            datas.insert(count++, data);
+            sameThread.insert(count2++, data);
         }
+        datas.insert(count1++, sameThread);
     }
     //将Json对象转换为字符串
     QJsonDocument document;
@@ -143,4 +146,7 @@ void Dialog::getGroupNumberWithDifferentThread(QString filename){
 void Dialog::on_ConnectedComponentQuickButton_clicked()
 {
     //可视化不同阈值下的联通fenl
+    qDebug() << "start";
+    getGroupNumberWithDifferentThread("output/iii");
+    qDebug() << "ok";
 }
