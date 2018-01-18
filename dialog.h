@@ -25,6 +25,10 @@ private slots:
 
     void on_ConnectedComponentQuickButton_clicked();
 
+    void on_betweennessCentralityButton_clicked();
+
+    void on_closenessCentralityButton_clicked();
+
 private:
     Ui::Dialog *ui;
     QWebEngineView *view;

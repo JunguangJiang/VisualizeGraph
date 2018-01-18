@@ -12,16 +12,21 @@
 #define NetworkFile_5 "output/network_5.csv"//阈值为5的文件
 #define NetworkFile_5_08  "output/network_5_08.csv"//阈值为3和0.8的文件
 #define NetworkFile_AnyThread "output/network_anythread.csv"//求任意阈值的联通分量文件
+#define TestFile "output/test.csv"
 
 #define ShortestPathFile "output/shortestPath.json"//生成的最短路径图信息
 #define MinSpanTreeFile "output/minSpanTree.json"//生成的最小生成树图信息
 #define ConnectedComponentFile "output/connectedComponent.json"//生成的连通图信息
 #define GroupNumberInDifferentThreadsFile "output/groupNumberInDifferentThreads.json"//在不同阈值下的连通图个数
+#define BetweenessCentralityFile "output/betweenessCentrality.json"//介数中心度
+#define ClosenessCentralityFile "output/closenessCentrality.json"//紧密中心度
 
 #define ShortestPathHtml "output/shortestPath.html"//生成的最短路径html
 #define MinSpanTreeHtml "output/minSpanTree.html"//生成的最小生成树html
 #define ConnectedComponentHtml "output/ConnectedComponent.html"//生成的连通图html
 #define GroupNumberInDifferentThreadsHtml "output/GroupNumberInDifferentThreads.html"//生成的连通图html
+#define BetweenessCentralityHtml "output/betweenCentrality.html"//介数中心度
+#define ClosenessCentralityHtml "output/closenessCentrality.html"
 
-#define PRIORITY_MAX std::numeric_limits<double>::max()//节点权重的最大可能取值
+#define PRIORITY_MAX std::numeric_limits<double>::max()/2.0//节点权重的最大可能取值
 #endif // PARAMETER_H

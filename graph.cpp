@@ -125,6 +125,7 @@ template<typename PU> void Graph::PFS(int s, PU prioUpdater)//优先级搜索（
         }
         status(s) = VISITED;//至此节点s访问完毕
     }
+
 }
 
 struct PrimPU{//针对Prim算法的顶点优先级更新器
@@ -223,6 +224,49 @@ void Graph::getMinSpanTreeDegrees(){//O(n)复杂度
             if(parent(i) != -1){//若节点不是树根，则必定存在父节点
                 minTreeDegree(i)++; minTreeDegree(parent(i))++;//将所有的树边的两个端点的度数都加一
             }
+        }
+    }
+}
+
+void Graph::getBetweennessCentrality(){
+    DijkstraPU dijkstraPU;
+    for(int i=0; i<n(); i++){
+        if(degree(i)!=0){//如果当前节点不是孤立点
+            reset();
+            PFS(i, dijkstraPU);//调用优先级搜索,只需要在i所在连通域寻找
+            for(int j=0; j<n(); j++){
+                if(priority(j)!=PRIORITY_MAX && j!=i){//如果i到j之间存在路径
+                    int k = parent(j);
+                    while(k!=i){//路径上除了i和j之外的节点中心度都加一
+                        betweennessCentrality(k)++;
+                        k = parent(k);
+                    }
+                }
+            }
+            qDebug()<<(double)i/(double)n()*100.0<<"%";
+        }
+    }
+    //由于所有节点的介数中心度都重复计算一次
+    for(int i=0; i<n(); i++){
+        betweennessCentrality(i)/=2;//所以除以2
+    }
+}
+
+void Graph::getClosenessCentrality(){
+    DijkstraPU dijkstraPU;
+    for(int i=0; i<n(); i++){
+        if(degree(i)!=0){//如果当前节点不是孤立点
+            reset();
+            PFS(i,dijkstraPU);//从i出发调用最短路径搜索
+            int count=0;//i所在连通域的节点个数
+            for(int j=0; j<n(); j++){
+                if(priority(j) != PRIORITY_MAX && j!=i){//如果从i到j的距离不是无穷大
+                    closenessCentrality(i)+=priority(j);//则计入i到j的最短路径长度到i的紧密中心度
+                    count++;
+                }
+            }
+            closenessCentrality(i) = closenessCentrality(i)/(double)count;//则紧密中心度是所有最短路径长度和的平均值
+            qDebug()<<(double)i/(double)n()*100.0<<"% "<<closenessCentrality(i);
         }
     }
 }
@@ -393,6 +437,87 @@ int Graph::writeConnectedComponent(QString filename, bool removeIsolatedPoint){
     return 0;
 }
 
+int Graph::writeBetweennessCentrality(QString filename, bool removeIsolatedPoint){
+    //-----将介数中心度写入本地文件------
+    int count = 0;//所有节点的名字从0开始
+    QJsonArray nodes;
+    for(int i=0; i<n(); i++){//
+        if(removeIsolatedPoint && degree(i) == 0)continue;//如果选择去除孤立点并且当前节点即为孤立点，则跳过
+        QJsonObject node;
+        node.insert("name", count);
+        node.insert("bCentrality", betweennessCentrality(i));//写入介数中心度
+        name(i) = count;//同时全图第i个节点需要知道自己在文件中的名字name
+        nodes.insert(count++, node);
+    }
+    count = 0;//所有节点的边从0开始
+    QJsonArray edges;
+    for(int i=0; i<e(); i++){//全部写入
+        QJsonObject edge;
+        edge.insert("source",name(m_edges[i]->source));
+        edge.insert("target",name(m_edges[i]->target));
+        edges.insert(count++, edge);
+    }
+    QJsonObject graph;
+    graph.insert("nodes",nodes);
+    graph.insert("edges", edges);
+    //将Json对象转换为字符串
+    QJsonDocument document;
+    document.setObject(graph);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    QString jsonString(byteArray);
+
+    //打开文件
+    QFile file(filename);
+    if(!file.open(QIODevice::WriteOnly|QIODevice::Text)){
+        qDebug()<<"Failed to open txt";
+        return -1;
+    }
+    QTextStream out(&file);
+    out<<jsonString;//将字符串写入文件
+    file.close();
+    return 0;
+}
+
+int Graph::writeClosenessCentrality(QString filename, bool removeIsolatedPoint){
+    //-----将紧密中心度写入本地文件------
+    int count = 0;//所有节点的名字从0开始
+    QJsonArray nodes;
+    for(int i=0; i<n(); i++){//
+        if(removeIsolatedPoint && degree(i) == 0)continue;//如果选择去除孤立点并且当前节点即为孤立点，则跳过
+        QJsonObject node;
+        node.insert("name", count);
+        node.insert("cCentrality", (int)closenessCentrality(i));//写入紧密中心度
+        name(i) = count;//同时全图第i个节点需要知道自己在文件中的名字name
+        nodes.insert(count++, node);
+    }
+    count = 0;//所有节点的边从0开始
+    QJsonArray edges;
+    for(int i=0; i<e(); i++){//全部写入
+        QJsonObject edge;
+        edge.insert("source",name(m_edges[i]->source));
+        edge.insert("target",name(m_edges[i]->target));
+        edges.insert(count++, edge);
+    }
+    QJsonObject graph;
+    graph.insert("nodes",nodes);
+    graph.insert("edges", edges);
+    //将Json对象转换为字符串
+    QJsonDocument document;
+    document.setObject(graph);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    QString jsonString(byteArray);
+
+    //打开文件
+    QFile file(filename);
+    if(!file.open(QIODevice::WriteOnly|QIODevice::Text)){
+        qDebug()<<"Failed to open txt";
+        return -1;
+    }
+    QTextStream out(&file);
+    out<<jsonString;//将字符串写入文件
+    file.close();
+    return 0;
+}
 
 void Graph::printPath(int source, int target){//打印路径到qDebug(),Note：前提是source和target之间有路径
     QVector<int> path;

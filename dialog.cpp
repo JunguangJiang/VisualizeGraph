@@ -156,3 +156,35 @@ void Dialog::on_ConnectedComponentQuickButton_clicked()
     view->show();
     view->load(getGroupNumberWithDifferentThreadHtmlAbsolutePath);//可视化不同阈值下的联通分量
 }
+
+void Dialog::on_betweennessCentralityButton_clicked()
+{
+    Graph graph;
+    graph.readFromFile(NetworkFile_5_08);
+    graph.getBetweennessCentrality();//在发布版本中为提高速度，可以将该句注释掉
+    QString string = QString("图中只显示非孤立点");
+    ui->resultEdit->setText(string);
+
+    //并进行可视化
+    graph.writeBetweennessCentrality(BetweenessCentralityFile,true);//并写入文件,选择删除孤立点
+    view->resize(ui->graphicsView->size());
+    QString betweenessCentralityHtmlAbsolutePath = "file:///"+QFileInfo(BetweenessCentralityHtml).absoluteFilePath();//介数中心度html的绝对路径
+    view->show();
+    //view->load(betweenessCentralityHtmlAbsolutePath);
+}
+
+void Dialog::on_closenessCentralityButton_clicked()
+{
+    Graph graph;
+    graph.readFromFile(NetworkFile_5_08);
+    graph.getClosenessCentrality();//在发布版本中为提高速度，可以将该句注释掉
+    QString string = QString("图中只显示非孤立点");
+    ui->resultEdit->setText(string);
+
+    //并进行可视化
+    graph.writeClosenessCentrality(ClosenessCentralityFile,true);//并写入文件,选择删除孤立点
+    view->resize(ui->graphicsView->size());
+    QString closenessCentralityHtmlAbsolutePath = "file:///"+QFileInfo(ClosenessCentralityHtml).absoluteFilePath();//介数中心度html的绝对路径
+    view->show();
+    //view->load(betweenessCentralityHtmlAbsolutePath);
+}
