@@ -146,6 +146,7 @@ void Dialog::getGroupNumberWithDifferentThread(QString filename){
 void Dialog::on_ConnectedComponentQuickButton_clicked()
 {
     //getGroupNumberWithDifferentThread(GroupNumberInDifferentThreadsFile);
+    ui->resultEdit->setText("请在下方选择总阈值");
     view->resize(ui->graphicsView->size());
     QString getGroupNumberWithDifferentThreadHtmlAbsolutePath = "file:///"+QFileInfo(GroupNumberInDifferentThreadsHtml).absoluteFilePath();//最短路径的html的绝对路径
     view->load(getGroupNumberWithDifferentThreadHtmlAbsolutePath);//可视化不同阈值下的联通分量

@@ -19,22 +19,12 @@
      <item>
       <widget class="QPushButton" name="minSpanTreeButton">
        <property name="text">
-        <string>最小生成树</string>
+        <string>生成最小支撑树</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
        </property>
       </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -42,15 +32,24 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLineEdit" name="threadEdit">
+           <property name="mouseTracking">
+            <bool>false</bool>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
-            <string>总阈值</string>
+            <string>在此输入总阈值</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLineEdit" name="similarityThreadEdit">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
-            <string>相似度阈值</string>
+            <string>在此输入相似度阈值</string>
            </property>
           </widget>
          </item>
@@ -58,6 +57,9 @@
           <widget class="QPushButton" name="connectedComponentButton">
            <property name="text">
             <string>连通分量</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -68,36 +70,32 @@
      <item>
       <widget class="QPushButton" name="ConnectedComponentQuickButton">
        <property name="text">
-        <string>显示不同阈值下的连通分量个数</string>
+        <string>不同阈值下的连通分量个数</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
        </property>
       </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLineEdit" name="sourceEdit">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="text">
-          <string>源点</string>
+          <string>在此输入源点</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLineEdit" name="targetEdit">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="text">
-          <string>终点</string>
+          <string>在此输入终点</string>
          </property>
         </widget>
        </item>
@@ -108,15 +106,26 @@
        <property name="text">
         <string>最短路径</string>
        </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QLineEdit" name="resultEdit"/>
+    <widget class="QLineEdit" name="resultEdit">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+    </widget>
    </item>
    <item>
-    <widget class="QGraphicsView" name="graphicsView"/>
+    <widget class="QGraphicsView" name="graphicsView">
+     <property name="mouseTracking">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
