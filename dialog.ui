@@ -13,138 +13,264 @@
   <property name="windowTitle">
    <string>Graph</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="minSpanTreeButton">
-       <property name="text">
-        <string>生成最小支撑树</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <widget class="QComboBox" name="dataSelect">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QLineEdit" name="threadEdit">
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
-           </property>
-           <property name="text">
-            <string>在此输入总阈值</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="similarityThreadEdit">
-           <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
-           </property>
-           <property name="text">
-            <string>在此输入相似度阈值</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="connectedComponentButton">
-           <property name="text">
-            <string>连通分量</string>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <property name="text">
+         <string>豆瓣影评数据集</string>
+        </property>
        </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ConnectedComponentQuickButton">
-       <property name="text">
-        <string>不同阈值下的连通分量个数</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
+       <item>
+        <property name="text">
+         <string>知乎评论数据集</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout"/>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>算法1</string>
+       </property>
+       <widget class="QLineEdit" name="sourceEdit">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>71</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
+        <property name="whatsThis">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;输入源点&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>输入源点</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="targetEdit">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>60</y>
+          <width>71</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
+        <property name="whatsThis">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;输入终点&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>输入终点</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="shortestPathButton">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>89</y>
+          <width>94</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>最短路径</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <zorder>sourceEdit</zorder>
+       <zorder>targetEdit</zorder>
+       <zorder>shortestPathButton</zorder>
+       <zorder>dataSelect</zorder>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="title">
+        <string>算法2</string>
+       </property>
+       <widget class="QPushButton" name="minSpanTreeButton">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>20</y>
+          <width>101</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>最小支撑树</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <zorder>minSpanTreeButton</zorder>
+       <zorder>groupBox_2</zorder>
+       <zorder>groupBox_2</zorder>
+       <zorder>groupBox_2</zorder>
+       <zorder>groupBox_2</zorder>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="title">
+        <string>算法3</string>
+       </property>
+       <widget class="QPushButton" name="betweennessCentralityButton">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>29</y>
+          <width>107</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>介数中心度</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="closenessCentralityButton">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>63</y>
+          <width>107</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>紧密中心度</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>算法4</string>
+       </property>
+       <widget class="QPushButton" name="ConnectedComponentQuickButton">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>123</y>
+          <width>91</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;不同阈值下的连通分量个数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>柱形图显示</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="connectedComponentButton">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>89</y>
+          <width>81</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>连通分量</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="similarityThreadEdit">
+        <property name="geometry">
+         <rect>
+          <x>15</x>
+          <y>64</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
+        <property name="whatsThis">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;输入相似度阈值&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>输入相似度阈值</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="threadEdit">
+        <property name="geometry">
+         <rect>
+          <x>15</x>
+          <y>33</y>
+          <width>71</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
+        <property name="whatsThis">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;输入总阈值&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>输入总阈值</string>
+        </property>
+       </widget>
+      </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLineEdit" name="sourceEdit">
+      <widget class="QLineEdit" name="resultEdit">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
-        <string>在此输入源点</string>
+        <string>提示框</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="targetEdit">
-       <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
-       </property>
-       <property name="text">
-        <string>在此输入终点</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="shortestPathButton">
-       <property name="text">
-        <string>最短路径</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="betweennessCentralityButton">
-       <property name="text">
-        <string>介数中心度</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="closenessCentralityButton">
-       <property name="text">
-        <string>紧密中心度</string>
+      <widget class="QGraphicsView" name="graphicsView">
+       <property name="mouseTracking">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QLineEdit" name="resultEdit">
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGraphicsView" name="graphicsView">
-     <property name="mouseTracking">
-      <bool>true</bool>
-     </property>
-    </widget>
    </item>
   </layout>
+  <zorder>resultEdit</zorder>
+  <zorder>graphicsView</zorder>
+  <zorder>groupBox</zorder>
+  <zorder>groupBox_2</zorder>
+  <zorder>groupBox_3</zorder>
+  <zorder>groupBox_4</zorder>
+  <zorder>minSpanTreeButton</zorder>
+  <zorder>dataSelect</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

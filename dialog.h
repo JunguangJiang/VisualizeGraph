@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QWebEngineView>
 
+enum DataSet{DOUBAN, ZHIHU};
+
 namespace Ui {
 class Dialog;
 }
@@ -29,10 +31,12 @@ private slots:
 
     void on_closenessCentralityButton_clicked();
 
+    void on_dataSelect_currentTextChanged(const QString &arg1);
+
 private:
+    DataSet dataSet;
     Ui::Dialog *ui;
     QWebEngineView *view;
-
     void getGroupNumberWithDifferentThread(QString filename);//计算不同阈值下的连通域个数
 };
 

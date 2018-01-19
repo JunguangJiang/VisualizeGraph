@@ -53,7 +53,7 @@ class Graph : public QObject
 public:
     explicit Graph(QObject *parent = nullptr);
     bool readFromFile(QString filename);//从文件filename中读取边和点的数据
-    bool adjustThread(double thread, QString inFile,  QString outFile, double similarityThread = 0.1);//改变阈值，从inFile读入，生成一张新的图存到outFile中 Note:thread是对总阈值的要求，similarityThread是对相似度的要求
+    bool adjustThread(double thread, QString inFile,  QString outFile, double similarityThread = 0.0);//改变阈值，从inFile读入，生成一张新的图存到outFile中 Note:thread是对总阈值的要求，similarityThread是对相似度的要求
     ~Graph();
 
 //读取图中的节点属性

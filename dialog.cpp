@@ -23,6 +23,7 @@ Dialog::Dialog(QWidget *parent) :
     ui->setupUi(this);
     view = new QWebEngineView(ui->graphicsView);
     view->show();
+    dataSet = DOUBAN;
 }
 
 Dialog::~Dialog()
@@ -33,9 +34,14 @@ Dialog::~Dialog()
 void Dialog::on_minSpanTreeButton_clicked()
 {
     Graph graph;
-    graph.readFromFile(NetworkFile_5_08);
-    int s = 114303;
-    //graph->getMinSpanTree(s);//找到以s为树根的最小生成树,Note：这种方式只能找到以s为树根的最小生成树，但是在d3处理中速度和效果较好
+    switch (dataSet) {
+    case DOUBAN:
+        graph.readFromFile(NetworkFile_5_08);
+        break;
+    case ZHIHU:
+        graph.readFromFile(ZhihuNetworkFile);
+        break;
+    }
     int groupNumber = graph.getMinSpanTree();//找最小生成树，Note：这种方式找到全图所有的最小生成树，但是在d3处理中速度和效果较差
     QString minSpanTreeString = QString("全图由") + QString::number(groupNumber) + QString("个最小生成树组成，图中只显示非孤立点");
     ui->resultEdit->setText(minSpanTreeString);
@@ -53,7 +59,14 @@ void Dialog::on_shortestPathButton_clicked()
     int source = ui->sourceEdit->text().toInt();//得到源点
     int target = ui->targetEdit->text().toInt();//和终点
     Graph graph;
-    graph.readFromFile(NetworkFile_5_08);
+    switch (dataSet) {
+    case DOUBAN:
+        graph.readFromFile(NetworkFile_5_08);
+        break;
+    case ZHIHU:
+        graph.readFromFile(ZhihuNetworkFile);
+        break;
+    }
     if( graph.isValidVertex(source) && graph.isValidVertex(target) ){//如果源点和终点输入都合法，则
         QVector<int> path;
         double pathLength = graph.getShortestPath(source, target, path);//才搜索一条最短路径
@@ -88,24 +101,47 @@ void Dialog::on_connectedComponentButton_clicked()
 {
     double thread = ui->threadEdit->text().toDouble();//得到总阈值
     double similarityThread = ui->similarityThreadEdit->text().toDouble();//和相似度阈值
-    if(thread > 2 && similarityThread <= 0.9 && similarityThread >= 0.1){
-        Graph graph;
-        graph.adjustThread(thread, NetworkFile, NetworkFile_AnyThread, similarityThread);
-        graph.readFromFile(NetworkFile_AnyThread);
-        int groupNumber = graph.getConnectedComponent();//求全图所有的联通分量
-        QString connectedComponentString = "当前阈值下共有连通域"+QString::number(groupNumber)+"个，图中只显示非孤立节点";
-        ui->resultEdit->setText(connectedComponentString);
+    switch (dataSet) {
+    case DOUBAN:
+        if(thread > 2 && similarityThread <= 0.9 && similarityThread >= 0.1){
+            Graph graph;
+            graph.adjustThread(thread, NetworkFile, NetworkFile_AnyThread, similarityThread);
+            graph.readFromFile(NetworkFile_AnyThread);
+            int groupNumber = graph.getConnectedComponent();//求全图所有的联通分量
+            QString connectedComponentString = "当前阈值下共有连通域"+QString::number(groupNumber)+"个，图中只显示非孤立节点";
+            ui->resultEdit->setText(connectedComponentString);
 
-        //并进行可视化
-        graph.writeConnectedComponent(ConnectedComponentFile, true);//并写入文件(删除孤立点）
-        view->resize(ui->graphicsView->size());
-        QString connectedComponentHtmlAbsolutePath = "file:///"+QFileInfo(ConnectedComponentHtml).absoluteFilePath();//最短路径的html的绝对路径
-        view->show();
-        view->load(connectedComponentHtmlAbsolutePath);//加载最短路径
-    }else if(thread <= 2){
-        QMessageBox::information(this,tr("错误输入"),"错误的总阈值输入，总阈值需要大于2", QMessageBox::Ok);
-    }else{
-        QMessageBox::information(this,tr("错误输入"),"错误的相似度阈值输入，相似度阈值在[0.1,0.9]范围内", QMessageBox::Ok);
+            //并进行可视化
+            graph.writeConnectedComponent(ConnectedComponentFile, true);//并写入文件(删除孤立点）
+            view->resize(ui->graphicsView->size());
+            QString connectedComponentHtmlAbsolutePath = "file:///"+QFileInfo(ConnectedComponentHtml).absoluteFilePath();//最短路径的html的绝对路径
+            view->show();
+            view->load(connectedComponentHtmlAbsolutePath);//加载最短路径
+        }else if(thread <= 2){
+            QMessageBox::information(this,tr("错误输入"),"错误的总阈值输入，总阈值需要大于2", QMessageBox::Ok);
+        }else{
+            QMessageBox::information(this,tr("错误输入"),"错误的相似度阈值输入，相似度阈值在[0.1,0.9]范围内", QMessageBox::Ok);
+        }
+        break;
+    case ZHIHU:
+        if(thread > 2){
+            Graph graph;
+            graph.adjustThread(thread, ZhihuNetworkFile, NetworkFile_AnyThread);
+            graph.readFromFile(NetworkFile_AnyThread);
+            int groupNumber = graph.getConnectedComponent();//求全图所有的联通分量
+            QString connectedComponentString = "当前阈值下共有连通域"+QString::number(groupNumber)+"个，图中只显示非孤立节点";
+            ui->resultEdit->setText(connectedComponentString);
+
+            //并进行可视化
+            graph.writeConnectedComponent(ConnectedComponentFile, true);//并写入文件(删除孤立点）
+            view->resize(ui->graphicsView->size());
+            QString connectedComponentHtmlAbsolutePath = "file:///"+QFileInfo(ConnectedComponentHtml).absoluteFilePath();//最短路径的html的绝对路径
+            view->show();
+            view->load(connectedComponentHtmlAbsolutePath);//加载最短路径
+        }else if(thread <= 2){
+            QMessageBox::information(this,tr("错误输入"),"错误的总阈值输入，总阈值需要大于2", QMessageBox::Ok);
+        }
+        break;
     }
 }
 
@@ -160,7 +196,14 @@ void Dialog::on_ConnectedComponentQuickButton_clicked()
 void Dialog::on_betweennessCentralityButton_clicked()
 {
     Graph graph;
-    graph.readFromFile(NetworkFile_5_08);
+    switch (dataSet) {
+    case DOUBAN:
+        graph.readFromFile(NetworkFile_20_088);
+        break;
+    case ZHIHU:
+        graph.readFromFile(ZhihuNetworkFile);
+        break;
+    }
     graph.getBetweennessCentrality();//在发布版本中为提高速度，可以将该句注释掉
     QString string = QString("图中只显示非孤立点");
     ui->resultEdit->setText(string);
@@ -170,13 +213,20 @@ void Dialog::on_betweennessCentralityButton_clicked()
     view->resize(ui->graphicsView->size());
     QString betweenessCentralityHtmlAbsolutePath = "file:///"+QFileInfo(BetweenessCentralityHtml).absoluteFilePath();//介数中心度html的绝对路径
     view->show();
-    //view->load(betweenessCentralityHtmlAbsolutePath);
+    view->load(betweenessCentralityHtmlAbsolutePath);
 }
 
 void Dialog::on_closenessCentralityButton_clicked()
 {
     Graph graph;
-    graph.readFromFile(NetworkFile_5_08);
+    switch (dataSet) {
+    case DOUBAN:
+        graph.readFromFile(NetworkFile_20_088);
+        break;
+    case ZHIHU:
+        graph.readFromFile(ZhihuNetworkFile);
+        break;
+    }
     graph.getClosenessCentrality();//在发布版本中为提高速度，可以将该句注释掉
     QString string = QString("图中只显示非孤立点");
     ui->resultEdit->setText(string);
@@ -186,5 +236,18 @@ void Dialog::on_closenessCentralityButton_clicked()
     view->resize(ui->graphicsView->size());
     QString closenessCentralityHtmlAbsolutePath = "file:///"+QFileInfo(ClosenessCentralityHtml).absoluteFilePath();//介数中心度html的绝对路径
     view->show();
-    //view->load(betweenessCentralityHtmlAbsolutePath);
+    view->load(closenessCentralityHtmlAbsolutePath);
+}
+
+void Dialog::on_dataSelect_currentTextChanged(const QString &arg1)
+{
+    if(arg1 == "豆瓣影评数据集"){
+        dataSet = DOUBAN;
+        ui->similarityThreadEdit->setHidden(false);
+        ui->ConnectedComponentQuickButton->setHidden(false);
+    }else{
+        dataSet = ZHIHU;
+        ui->similarityThreadEdit->setHidden(true);
+        ui->ConnectedComponentQuickButton->setHidden(true);
+    }
 }
