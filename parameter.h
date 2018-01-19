@@ -26,5 +26,6 @@
 #define PRIORITY_MAX std::numeric_limits<double>::max()/2.0//节点权重的最大可能取值
 
 #define ZhihuNetworkFile "output/zhihuNetwork.csv"//知乎网络构建文件
+#define ZhihuNetworkFile_3 "output/zhihuNetwork_3.csv"//阈值为3的文件
 
 #endif // PARAMETER_H
