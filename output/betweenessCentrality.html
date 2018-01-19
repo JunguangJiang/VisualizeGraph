@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type = "text/javascript" src = "betweenessCentrality.js"></script>
+    <script type="text/javascript" src = "color.js"></script>
+</head>
+<body>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+<script>
+
+    d3.json("betweenessCentrality.json",function (error, graph) {
+        if (error) {
+            console.log("加载json文件出错", error);
+        }
+        betweenessCentrality(graph,d3);
+    });
+</script>
+</body>
+</html>

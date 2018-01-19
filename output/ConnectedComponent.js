@@ -17,7 +17,7 @@ function visualizeConnectedComponent(graph,d3) {//将图graph上的最短路径�
         .links(edges)		//指定连线数组
         .size([width,height])	//指定范围
         .linkDistance(100)	//指定连线长度
-        .charge([-150]);	//相互之间的作用力
+        .charge([-80]);	//相互之间的作用力
 
     force.start();	//开始作用
 
@@ -55,8 +55,8 @@ function visualizeConnectedComponent(graph,d3) {//将图graph上的最短路径�
             .attr("y1",function(d){ 
                 if (d.source.y < 0)
                     d.source.y = 0;
-                else if (d.source.y > width)
-                    d.source.y = width;
+                else if (d.source.y > height)
+                    d.source.y = height;
                 return d.source.y; 
             })
             .attr("x2",function(d){ 
@@ -69,8 +69,8 @@ function visualizeConnectedComponent(graph,d3) {//将图graph上的最短路径�
             .attr("y2",function(d){ 
                 if (d.target.y < 0)
                     d.target.y = 0;
-                else if (d.target.y > width)
-                    d.target.y = width;
+                else if (d.target.y > height)
+                    d.target.y = height;
                 return d.target.y; 
             })
 
@@ -85,8 +85,8 @@ function visualizeConnectedComponent(graph,d3) {//将图graph上的最短路径�
             .attr("cy",function(d){ 
                 if (d.y < 0)
                     d.y = 0;
-                else if (d.y > width)
-                    d.y = width;
+                else if (d.y > height)
+                    d.y = height;
                 return d.y; 
             })
     });

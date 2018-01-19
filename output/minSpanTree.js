@@ -36,12 +36,12 @@ function visualizeMinSpanTree(graph,d3) {//将图graph上的最短路径可视�
         .enter()
         .append("circle")
         .attr("r", function (d) {
-            if(d.degree > 100) return 9;
-            else if(d.degree > 10) return 6;
+            if(d.degree > 100) return 5;
+            else if(d.degree > 10) return 4;
             else return 2;
         })
         .style("fill",function(d){
-            if(d.degree > 100) return red;
+            if(d.degree > 100) return orange;
             else if(d.degree > 10) return skyBlue;
             else return lightGreen;
         })
@@ -63,8 +63,8 @@ function visualizeMinSpanTree(graph,d3) {//将图graph上的最短路径可视�
             .attr("y1",function(d){ 
                 if (d.source.y < 0)
                     d.source.y = 0;
-                else if (d.source.y > width)
-                    d.source.y = width;
+                else if (d.source.y > height)
+                    d.source.y = height;
                 return d.source.y; 
             })
             .attr("x2",function(d){ 
@@ -77,8 +77,8 @@ function visualizeMinSpanTree(graph,d3) {//将图graph上的最短路径可视�
             .attr("y2",function(d){ 
                 if (d.target.y < 0)
                     d.target.y = 0;
-                else if (d.target.y > width)
-                    d.target.y = width;
+                else if (d.target.y > height)
+                    d.target.y = height;
                 return d.target.y; 
             })
 
@@ -93,8 +93,8 @@ function visualizeMinSpanTree(graph,d3) {//将图graph上的最短路径可视�
             .attr("cy",function(d){ 
                 if (d.y < 0)
                     d.y = 0;
-                else if (d.y > width)
-                    d.y = width;
+                else if (d.y > height)
+                    d.y = height;
                 return d.y; 
             })
     });
