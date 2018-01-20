@@ -39,7 +39,7 @@ void Dialog::on_minSpanTreeButton_clicked()
         graph.readFromFile(NetworkFile_5_08);
         break;
     case ZHIHU:
-        graph.readFromFile(ZhihuNetworkFile_3);
+        graph.readFromFile(ZhihuNetworkFile);
         break;
     }
     int groupNumber = graph.getMinSpanTree();//找最小生成树，Note：这种方式找到全图所有的最小生成树，但是在d3处理中速度和效果较差
@@ -64,7 +64,7 @@ void Dialog::on_shortestPathButton_clicked()
         graph.readFromFile(NetworkFile_5_08);
         break;
     case ZHIHU:
-        graph.readFromFile(ZhihuNetworkFile_3);
+        graph.readFromFile(ZhihuNetworkFile);
         break;
     }
     if( graph.isValidVertex(source) && graph.isValidVertex(target) ){//如果源点和终点输入都合法，则

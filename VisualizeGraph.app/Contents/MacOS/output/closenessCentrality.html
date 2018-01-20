@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type = "text/javascript" src = "closenessCentrality.js"></script>
+    <script type="text/javascript" src = "color.js"></script>
+
+</head>
+<body>
+    <div>
+        <p>中心度等级：</p>
+        一级<img src="https://ws1.sinaimg.cn/large/006tKfTcly1fnm6heawdhj307900raa2.jpg" align="top">十级
+    </div>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script>
+    d3.json("closenessCentrality.json",function (error, graph) {
+        if (error) {
+            console.log("加载json文件出错", error);
+        }
+        closenessCentrality(graph,d3);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type = "text/javascript" src = "groupNumberInDifferentThreads.js"></script>
+    <script type="text/javascript" src = "color.js"></script>
+</head>
+<body onload="addBtn()">
+    <div id="buttons"><b> 总阈值为：</b></div>
+    <div id="graph"></div>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+<script>
+
+    d3.json("groupNumberInDifferentThreads.json",function (error, info) {
+        if (error) {
+            console.log("加载json文件出错", error);
+        }
+        groupNumberInDifferentThreads(info,d3);
+    });
+</script>
+</body>
+</html>
